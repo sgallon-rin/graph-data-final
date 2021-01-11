@@ -6,6 +6,7 @@
 /pvldbstyle-master/
 *.webloc
 *.zip
+*.ipynb
 .idea/
 .vscode/
 
