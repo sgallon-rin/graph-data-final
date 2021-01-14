@@ -1,0 +1,71 @@
+%% This BibTeX bibliography file was created using BibDesk.
+%% https://bibdesk.sourceforge.io/
+
+%% Created for Sgallon at 2021-01-13 15:15:31 +0800 
+
+
+%% Saved with string encoding Unicode (UTF-8) 
+
+
+
+@inproceedings{Zheng:2020aa,
+	abstract = {As a well-known optimization problem, the maximum independent set (MIS) has attracted a lot of effort due to its significance in graph theory and wide applications. Nevertheless, the vertices of many graphs are weighted unequally in real scenarios, but the previous studies ignore the intrinsic weights on the graphs. Therefore, the weight of an MIS may not necessary to be the largest. Generalizing the traditional MIS problem, we study the problem of maximum weighted independent set (MWIS) that returns the set of independent vertices with the largest weight in this paper, which is computationally expensive. Following the reduction-and-branching strategy, we propose an exact algorithm to compute the maximum weighted independent set. Since it is intractable to deliver the exact solution for large graphs, we design an efficient greedy algorithm to compute a near-maximum weighted independent set. We devise a set of novel reductions for general weighted graphs. To confirm the effectiveness and efficiency of the proposed methods, we conduct extensive experimental studies over a bunch of real graphs.},
+	author = {W. Zheng and J. Gu and P. Peng and J. X. Yu},
+	booktitle = {2020 IEEE 36th International Conference on Data Engineering (ICDE)},
+	date-added = {2021-01-13 15:15:22 +0800},
+	date-modified = {2021-01-13 15:15:22 +0800},
+	doi = {10.1109/ICDE48307.2020.00216},
+	isbn = {2375-026X},
+	journal = {2020 IEEE 36th International Conference on Data Engineering (ICDE)},
+	journal1 = {2020 IEEE 36th International Conference on Data Engineering (ICDE)},
+	keywords = {graph theory; greedy algorithms; optimisation; set theory; efficient weighted independent set computation; optimization problem; maximum independent set; graph theory; intrinsic weights; traditional MIS problem; independent vertices; largest weight; near-maximum weighted independent set; general weighted graphs; MIS; Greedy algorithms; Task analysis; Micromechanical devices; Graph theory; Conferences; Data engineering; Data science},
+	pages = {1970--1973},
+	title = {Efficient Weighted Independent Set Computation over Large Graphs},
+	ty = {CONF},
+	year = {2020},
+	year1 = {20-24 April 2020},
+	Bdsk-Url-1 = {https://doi.org/10.1109/ICDE48307.2020.00216}}
+
+@inproceedings{Zheng:2018aa,
+	abstract = {Most existing algorithms computing the maximum independent set (MIS) or independent set (IS) are designed for handling static graphs, which may not be practicable as many networks are dynamically evolving over time. In this paper, we study the MIS/IS problem in evolving graphs by considering graph update operations: vertex/edge addition and vertex/edge deletion. Instead of computing the MIS/IS of the updated graph from scratch, we propose a baseline algorithm that finds the MIS/IS at time ti+1 based on the MIS/IS at time ti. Due to the hardness of computing an exact MIS, we develop an efficient constant-time algorithm LSTwo to return a high-quality (large-size) independent set. Then we design a lazy search algorithm which produces higher-quality independent sets. To improve the time efficiency further, we devise the conditional besieging and k-petal based methods to reduce the search space. Extensive experimental studies over large-scale graphs confirm the effectiveness and efficiency of our proposed algorithms.},
+	author = {W. Zheng and Q. Wang and J. Xu Yu and H. Cheng and L. Zou},
+	booktitle = {2018 IEEE 34th International Conference on Data Engineering (ICDE)},
+	date-added = {2021-01-13 15:11:20 +0800},
+	date-modified = {2021-01-13 15:11:20 +0800},
+	doi = {10.1109/ICDE.2018.00083},
+	isbn = {2375-026X},
+	journal = {2018 IEEE 34th International Conference on Data Engineering (ICDE)},
+	journal1 = {2018 IEEE 34th International Conference on Data Engineering (ICDE)},
+	keywords = {computational complexity; graph theory; search problems; near-maximum independent set; evolving graphs; static graphs; graph update operations; vertex/edge addition; vertex/edge deletion; baseline algorithm; constant-time algorithm LSTwo; lazy search algorithm; time efficiency; large-scale graphs; independent sets; Heuristic algorithms; Time complexity; Approximation algorithms; Greedy algorithms; Computational modeling; Data models; Social network services; independent set; evolving graph; maximum independent set; greedy algorithm},
+	pages = {869--880},
+	title = {Efficient Computation of a Near-Maximum Independent Set over Evolving Graphs},
+	ty = {CONF},
+	year = {2018},
+	year1 = {16-19 April 2018},
+	Bdsk-Url-1 = {https://doi.org/10.1109/ICDE.2018.00083}}
+
+@article{Chang:2020aa,
+	abstract = {This paper studies the problem of maximum clique computation (MCC) over sparse graphs, as large real-world graphs are usually sparse. In the literature, the problem of MCC over sparse graphs has been studied separately and less extensively than its dense counterpart---MCC over dense graphs---and advanced algorithmic techniques that are developed for MCC over dense graphs have not been utilized in the existing MCC solvers for sparse graphs. In this paper, we design an algorithm {\$}{\$}{$\backslash$}mathsf {\{}MC{$\backslash$}text {\{}-{\}}BRB{\}}{\$}{\$}MC-BRBfor sparse graphs which transforms an instance of MCC over a large sparse graph G to instances of k-clique finding (KCF) over dense subgraphs of G, each of which can be computed by the existing MCC solvers for dense graphs. To further improve the efficiency, we then develop a new branch-reduce-\&-bound framework for KCF over dense graphs by proposing light-weight reducing techniques and leveraging the advanced branching and bounding techniques that are used in the existing MCC solvers for dense graphs. In addition, we also design an ego-centric algorithm {\$}{\$}{$\backslash$}mathsf {\{}MC{$\backslash$}text {\{}-{\}}EGO{\}}{\$}{\$}MC-EGOfor heuristically computing a near-maximum clique in near-linear time, and we extend our {\$}{\$}{$\backslash$}mathsf {\{}MC{$\backslash$}text {\{}-{\}}BRB{\}}{\$}{\$}MC-BRBalgorithm to enumerate all maximum cliques. Finally, we parallelize our algorithms to exploit multiple CPU cores. We conduct extensive empirical studies on large real graphs and demonstrate the efficiency and effectiveness of our techniques.},
+	author = {Chang, Lijun},
+	da = {2020/09/01},
+	date-added = {2021-01-13 15:07:46 +0800},
+	date-modified = {2021-01-13 15:07:46 +0800},
+	doi = {10.1007/s00778-020-00602-z},
+	id = {Chang2020},
+	isbn = {0949-877X},
+	journal = {The VLDB Journal},
+	number = {5},
+	pages = {999--1022},
+	title = {Efficient maximum clique computation and enumeration over large sparse graphs},
+	ty = {JOUR},
+	url = {https://doi.org/10.1007/s00778-020-00602-z},
+	volume = {29},
+	year = {2020},
+	Bdsk-Url-1 = {https://doi.org/10.1007/s00778-020-00602-z}}
+
+@misc{snapnets,
+	author = {Jure Leskovec and Andrej Krevl},
+	howpublished = {\url{http://snap.stanford.edu/data}},
+	month = jun,
+	title = {{SNAP Datasets}: {Stanford} Large Network Dataset Collection},
+	year = 2014}
