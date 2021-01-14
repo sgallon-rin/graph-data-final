@@ -9,6 +9,7 @@
 *.ipynb
 .idea/
 .vscode/
+data/
 
 # Ignore all files in "LaTeX" folders
 /report/*
