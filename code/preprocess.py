@@ -16,7 +16,7 @@ GRAPH_DIR = "../graph/"
 RANDOM_SEED = 123
 RANDOM_WEIGHT_INTERVAL = (1, 200)
 FILETYPE_DICT = {"mat": GraphLoaderMat, 'json': GraphLoaderJson, 'txt': GraphLoaderTxt}
-# FILETYPE_DICT = {"mat": GraphLoaderMat, 'json': GraphLoaderJson}
+
 
 def load_raw_and_save_graph(loadfile: str, savefile: str):
     filename, filetype = loadfile.split('/')[-1].split('.')
