@@ -11,6 +11,7 @@ pvldbstyle-master/
 .vscode/
 data/
 graph/
+metis/
 
 # Ignore all files in "LaTeX" folders
 /report/*

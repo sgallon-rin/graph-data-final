@@ -37,6 +37,8 @@ class GraphLoader(metaclass=abc.ABCMeta):
         """
         read graph from saved .graph file and return it
         class method, does not save the graph into object
+        :param file: string, a filepath of a .graph file
+        :return: a networkx graph, weighted, undirected
         """
         cls._check_file_type_cls(file)
         graph = joblib.load(file)
@@ -55,13 +57,24 @@ class GraphLoader(metaclass=abc.ABCMeta):
                             .format(self._filetype, in_filetype, os.path.abspath(file)))
 
     def load_graph_from_graph(self, file: str):
-        """load graph from .graph file"""
+        """
+        load graph from .graph file
+        :param file: string, a filepath of a .graph file
+        :return: a networkx graph, weighted, undirected
+        """
         self._check_file_type_cls(file)
         self.graph = joblib.load(file)
         print("Successfully loaded graph from {}".format(os.path.abspath(file)))
         self.print_graph_info(self.graph)
 
     def load_graph_from_raw(self, file: str, random_seed: int, weight_interval):
+        """
+        load graph from raw file
+        :param file: string, a filepath of a raw file
+        :param random_seed: int
+        :param weight_interval: (int, int)
+        :return: a networkx graph, weighted, undirected
+        """
         self._check_file_type(file)
         self._load_raw_data(file)
         print("Successfully loaded raw data from file {}".format(os.path.abspath(file)))
@@ -70,7 +83,11 @@ class GraphLoader(metaclass=abc.ABCMeta):
         self.print_graph_info(self.graph)
 
     def save_graph(self, file: str):
-        """save graph to file"""
+        """
+        save graph to file
+        :param file: file: string, a filepath to save .graph file
+        :return:
+        """
         joblib.dump(self.graph, file)
         print("Successfully saved graph to {}".format(os.path.abspath(file)))
 
@@ -183,6 +200,7 @@ class GraphLoaderJson(GraphLoader):
         self.graph = g
 
 
+"""
 if __name__ == "__main__":
     # fname = "../../data/GD98_c.mat"
     # gname = "../../graph/GD98_c.graph"
@@ -201,3 +219,4 @@ if __name__ == "__main__":
     graphloader.save_graph(gname)
     GG = GraphLoader.get_graph_from_graph(gname)
     print("foo")
+"""

@@ -11,7 +11,11 @@ import os
 
 
 def listdir_remove_temp(directory):
-    """获取文件列表并移除macOS系统临时文件"""
+    """
+    获取文件列表并移除macOS系统临时文件
+    :param directory: string
+    :return: list(string)
+    """
     file_list = os.listdir(directory)
     if ".DS_Store" in file_list:
         file_list.remove(".DS_Store")

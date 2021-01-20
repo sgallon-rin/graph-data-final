@@ -19,6 +19,12 @@ FILETYPE_DICT = {"mat": GraphLoaderMat, 'json': GraphLoaderJson, 'txt': GraphLoa
 
 
 def load_raw_and_save_graph(loadfile: str, savefile: str):
+    """
+    load raw file, make a weighted undirected graph and save it
+    :param loadfile: string, filepath to load
+    :param savefile: string, filepath to save
+    :return:
+    """
     filename, filetype = loadfile.split('/')[-1].split('.')
     if filetype not in FILETYPE_DICT.keys():
         # raise TypeError("Filetype {} incorrect! Must be in {}".format(filetype, FILETYPE_DICT.keys()))
