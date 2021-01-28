@@ -12,6 +12,8 @@ pvldbstyle-master/
 data/
 graph/
 metis/
+metis-done/
+reportdoc/
 
 # Ignore all files in "LaTeX" folders
 /report/*
