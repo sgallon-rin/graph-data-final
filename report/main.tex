@@ -14,6 +14,8 @@
 \usepackage{framed}
 \usepackage{graphicx}
 \newcommand*{\algorithmautorefname}{Algorithm}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
 
 %% The following content must be adapted for the final version
 % paper-specific
@@ -131,7 +133,17 @@ Computing the exact $MWIS(G)$ is a non-trivial task. Thus, it is usually accepta
 
 Exact algorithms usually compute optimal solutions by systematically exploring the solution space. A frequently used paradigm in exact algorithms for combinatorial optimization problems is called branch-and-bound~\cite{ostergaard2002fast,warren2006combinatorial}. For the MWIS problem, these types of algorithms compute optimal solutions by case distinctions in which vertices are either included into the current solution or excluded from it, branching into two or more subproblems and resulting in a search tree. There have been many research to improve exact branch-and-bound algorithms. These improvements include different pruning methods and complicated branching schemes with upper and lower bounds to exclude specific subtrees. \citet{warren2006combinatorial} proposed three branch-and-bound algorithms which combine the use of weighted clique covers and a branching scheme introduced by~\citet{balas1986finding}. Their algorithms are able to quickly solve instances with hundreds of vertices.
 
-In recent years, reduction rules have frequently been added into branch-and-bound methods yielding the branch-and-reduce algorithms. These algorithms are able to improve the worst case runtime of branch-and-bound algorithms by applying the reduction rules to the current graph before each branching step~\cite{fomin2009measure}. Specifically, two cases should be considered for a vertex $u$: $u$ is included in the MWIS, or $u$ is not included in the MWIS. In the first case, all neighbors of $u$ cannot belong to the MWIS. The Algorithm is recursively invoked to compute the maximum weighted independent set $S$ of $G\backslash(\{u\} \cup N(u))$, where $N(u)$ is the set of neighbors of $u$ and $G\backslash R$ represents the graph remained by removing the vertices in the vertex set $R$ and the incident edges. If it holds that $\omega(u)+\omega(S)>\max W$, we use $S\cup\{u\}$ to update $MWIS(G)$. In the second case, the process is recursively invoked to compute the maximum weighted independent set $S$ of $G\backslash\{u\}$. If its weight is larger than $\max W$, the MWIS is updated with $S$.
+In recent years, reduction rules have frequently been added into branch-and-bound methods yielding the branch-and-reduce algorithms. These algorithms are able to improve the worst case runtime of branch-and-bound algorithms by applying the reduction rules to the current graph before each branching step~\cite{fomin2009measure}. 
+
+Specifically, two cases should be considered for a vertex $u$: 
+\begin{itemize}
+	\item $u$ is included in the MWIS; or
+	\item $u$ is not included in the MWIS.
+\end{itemize}
+\begin{enumerate}
+	\item In the first case, all neighbors of $u$ cannot belong to the MWIS. The Algorithm is recursively invoked to compute the maximum weighted independent set $S$ of $G\backslash(\{u\} \cup N(u))$, where $N(u)$ is the set of neighbors of $u$ and $G\backslash R$ represents the graph remained by removing the vertices in the vertex set $R$ and the incident edges. If it holds that $\omega(u)+\omega(S)>\max W$, we use $S\cup\{u\}$ to update $MWIS(G)$. 
+	\item In the second case, the process is recursively invoked to compute the maximum weighted independent set $S$ of $G\backslash\{u\}$. If its weight is larger than $\max W$, the MWIS is updated with $S$.
+\end{enumerate}
 
 \subsection{Heuristic Algorithms}
 
@@ -176,30 +188,70 @@ When no reduction rules can be applied to the current graph, we need to delete s
 
 \subsection{Improvement of Reduction Algorithms}
 
-Vertices with larger weights are more likely to be in the MWIS. If they do, check them earlier may prune their neighbors earlier, so that there will be less vertices to check in $V_G$. Therefore, prior to applying the reduction rules, sorting the vertices by weight in descending order can possibly be helpful. However, sorting the vertices brings extra cost, which is tested in our experiment.
+Vertices with larger weights are more likely to be in the MWIS. If they do, check them earlier may prune their neighbors earlier, so that there will be less vertices to check in $V_G$. Therefore, prior to applying the reduction rules, sorting the vertices by weight in descending order can possibly be helpful. However, sorting the vertices brings extra cost, which is tested in our experiment. 
+
+Based on the algorithms~\citet{Zheng:2020aa} proposed, we add sort stages and propose \autoref{alg:1vertexsort} and \autoref{alg:2vertexsort}. Like the original work, instead of checking all the vertices in each iteration, \autoref{alg:1vertexsort} just considers the neighbors of each vertex in the set of removed vertices in the previous iteration. \autoref{alg:2vertexsort} uses an `unused' flag to avoid repeated visit of some vertex pairs.
+
+\begin{algorithm}[tbp]
+\caption{Single-vertex Reduction with Sort}
+\label{alg:1vertexsort}
+%\SetAlgoLined
+\begin{algorithmic}[1]
+	\REQUIRE A graph $G=(V_G,E_G,\omega)$
+        %\vspace*{-.45cm}
+	\ENSURE $S$: a set of vertices in $MWIS(G)$
+	\STATE   initialize $S\leftarrow \emptyset$, $T\leftarrow \emptyset$
+	\STATE   sort $V_G$ by weight in descending order so that $\omega(u_1)\geq\cdots\geq\omega(u_n)$
+	\STATE   \textbf{for} each vertex $u\in V_G$ \textbf{do}
+	\STATE   \quad $\delta(u)\leftarrow 0$
+	\STATE   \quad \textbf{for} each vertex $v\in N(u)$ \textbf{do}
+	\STATE   \quad \quad $\delta(u)\leftarrow\delta(u) + \omega(v)$
+	\STATE   \quad \textbf{if} $\omega(u)\geq\delta(u)$ \textbf{then}
+	\STATE   \quad \quad $S \leftarrow S\cup \{u\}$
+	\STATE   \quad \quad \textbf{for} earh vertex $v\in N(u)$ \textbf{do}
+	\STATE   \quad \quad \quad delete $v$ and its adjacent edges from $G$
+	\STATE   \quad \quad \quad $T \leftarrow T\cup \{v\}$
+	\STATE   \textbf{while} $T\neq \emptyset$ \textbf{do}
+	\STATE   \quad sort $T$ by weight in descending order so that $\omega(v_1)\geq\cdots\geq\omega(v_m)$
+	\STATE   \quad $T' \leftarrow T$, $T\leftarrow \emptyset$
+	\STATE   \quad \textbf{for} each vertex $u\in T'$ \textbf{do}
+	\STATE   \quad \quad \textbf{for} each vertex $v\in N(u)$ \textbf{do}
+	\STATE   \quad \quad \quad $\delta(v) \leftarrow \delta(v) - \omega(u)$
+	\STATE   \quad \quad \textbf{if} $\omega(u)\geq \delta(v)$ \textbf{then}
+	\STATE   \quad \quad \quad $S\leftarrow S\cup\{v\}$
+	\STATE   \quad \quad \quad \textbf{for} each vertex $w\in N(v)$ \textbf{do}
+	\STATE   \quad \quad \quad \quad $T\leftarrow T\cup\{w\}$
+	\STATE   \quad \quad \quad \quad delete $w$ and its adjacent edges from $G$
+	\STATE   \textbf{return} $S$
+\end{algorithmic}
+\end{algorithm}
+
 
 \begin{algorithm}[tbp]
 \caption{Two-vertex Reduction with Sort}
 \label{alg:2vertexsort}
 %\SetAlgoLined
-\begin{algorithmic}
-	\STATE   \textbf{Input} A graph $G=(V_G,E_G,\omega)$
+\begin{algorithmic}[1]
+	\REQUIRE A graph $G=(V_G,E_G,\omega)$
         %\vspace*{-.45cm}
-	\STATE   \textbf{Output} $S$: a set of vertices in $MWIS(G)$
+	\ENSURE $S$: a set of vertices in $MWIS(G)$
 	\STATE   initialize $S\leftarrow \emptyset$
+	\STATE   initialize status of each vertex as `unused'
+	\STATE   sort $V_G$ by weight in descending order so that $\omega(u_1)\geq\cdots\geq\omega(u_n)$
 	\STATE   \textbf{for} each vertex $u\in V_G$ \textbf{do}
+	\STATE   \quad status($u$) $\leftarrow$ `used'
 	\STATE   \quad $T \leftarrow \emptyset$
 	\STATE   \quad \textbf{for} each vertex $v\in N(u)$ \textbf{do}
-	\STATE   \quad \quad \textbf{for} each vertex $w\in N(v)$ \textbf{do}
+	\STATE   \quad \quad \textbf{for} each `unused' vertex $w\in N(v)$ \textbf{do}
 	\STATE   \quad \quad \quad \textbf{if} $e(u,w) \notin E_G$ \textbf{then}
 	\STATE   \quad \quad \quad \quad $T \leftarrow T \cup \{w\}$
-	\STATE   \quad calculate the maximal independent sets $\mathcal{M}=\{M_1,...,M_a\}$, $M_i \subseteq T$, $i=1,...,a$
-	\STATE   \quad sort $\mathcal{M}$ in descending order so that $\omega(M_1)\geq...\geq\omega(M_a)$
-	\STATE   \quad \textbf{for} $M_i\in\mathcal{M}$ \textbf{do}
-	\STATE   \quad \quad \textbf{if} $\omega(u)+\omega(M_i)\geq \omega(N(u)\cup N(M_i))$ \textbf{then}
-	\STATE   \quad \quad \quad $S\leftarrow S\cup\{u\}\cup M_i$
-	\STATE   \quad \quad \quad remove $\{u\}$, $M_i$ and $N(u)\cup N(M_i)$ from G
+	\STATE   \quad sort $T$ by weight in descending order so that $\omega(w_1)\geq\cdots\geq\omega(w_m)$
+	\STATE   \quad \textbf{for} each vertex $v\in T$ \textbf{do}
+	\STATE   \quad \quad \textbf{if} $\omega(u)+\omega(v)\geq \omega(N(u)\cup N(v))$ \textbf{then}
+	\STATE   \quad \quad \quad $S\leftarrow S\cup\{u,v\}$
+	\STATE   \quad \quad \quad remove $\{u,v\}$ and $N(u)\cup N(v)$ from G
 	\STATE   \quad \quad \quad \textbf{break}
+	\STATE   \textbf{return} $S$
 \end{algorithmic}
 \end{algorithm}
 
@@ -247,7 +299,7 @@ Thus the proof is achieved.
   \end{minipage}
 \end{figure}
 
-However, if $k\geq 3$, "used" status in \autoref{alg:2vertexsort} may no longer be helpful. For a center vertex $u_1$, its 2-hop neighbours $u_2$ and $u_3$ can either be neighbors or not neighbors, as shown in \autoref{fig:kvertex2}.
+However, if $k\geq 3$, `used" status in \autoref{alg:2vertexsort} may no longer be helpful. For a center vertex $u_1$, its 2-hop neighbours $u_2$ and $u_3$ can either be neighbors or not neighbors, as shown in \autoref{fig:kvertex2}.
 
 \begin{framed}
 \noindent\textbf{Theorem 4.3:}
@@ -259,30 +311,61 @@ If a set of $k$ vertices $\{u_1, u_2, \cdots, u_k\}$ is added into $MWIS(G)$ by 
 By the definition of an independent set, any pair of vertices $(u_i, u_j)\ (i\neq j)$ from $\{u_1, u_2, \cdots, u_k\}$ must not be neighbors; and by theorem 4.2, $\{u_1, u_2, \cdots, u_k\}$ share at least one common neighbor. Therefore, an arbitrary pair of vertices $(u_i, u_j)\ (i\neq j)$ from $\{u_1, u_2, \cdots, u_k\}$ are 2-hop neighbors of each other. Thus the proof is achieved.
 \end{proof}
 
-The reduction algorithm is shown as \autoref{alg:kvertex}.
+For an exact solution, we propose the optimal $k$-vertex reduction algorithm shown as \autoref{alg:optimalkvertex}, which can be applied directly after applying single-vertex reduction. Here, $k$ is not a parameter, but the size of a locally optimal maximal independent set that has the largest weight. Calculating a maximal independent set can be costly, but it is studied more and thus an easier problem.
+
+For an approximate solution, we propose the exact $k$-vertex reduction algorithm shown as \autoref{alg:exactkvertex}, where $k\geq 2$ is a parameter. When $k=2$, the algorithm reduces to Two-vertex Reduction. Exact $k$-vertex reduction should be applied after applying Single-vertex reduction and exact $\{2,\cdots,k-1\}$-vertex reductions, since $k$-vertex reduction with a smaller $k$ is always cheaper. Instead of enumerating all pairs of vertices, it just needs to examine the set of $k$ vertices $\{u_1,\cdots,u_k\}$ that share one common neighbor at least. Theoretically, using a larger $k$ will lead to a more precise MWIS. When no reduction rules can be applied to the current graph, we need to delete some of the largest-degree vertices so that at least one reduction rule becomes available.
 
 \begin{algorithm}[tbp]
-\caption{$k$-vertex Reduction}
-\label{alg:kvertex}
+\caption{Optimal $k$-vertex Reduction}
+\label{alg:optimalkvertex}
 %\SetAlgoLined
-\begin{algorithmic}
-	\STATE   \textbf{Input} A graph $G=(V_G,E_G,\omega)$
+\begin{algorithmic}[1]
+	\REQUIRE A graph $G=(V_G,E_G,\omega)$
         %\vspace*{-.45cm}
-	\STATE   \textbf{Output} $S$: a set of vertices in $MWIS(G)$
+	\ENSURE $S$: a set of vertices in $MWIS(G)$
 	\STATE   initialize $S\leftarrow \emptyset$
+	\STATE   sort $V_G$ by weight in descending order so that $\omega(u_1)\geq\cdots\geq\omega(u_n)$
 	\STATE   \textbf{for} each vertex $u\in V_G$ \textbf{do}
 	\STATE   \quad $T \leftarrow \emptyset$
 	\STATE   \quad \textbf{for} each vertex $v\in N(u)$ \textbf{do}
 	\STATE   \quad \quad \textbf{for} each vertex $w\in N(v)$ \textbf{do}
 	\STATE   \quad \quad \quad \textbf{if} $e(u,w) \notin E_G$ \textbf{then}
 	\STATE   \quad \quad \quad \quad $T \leftarrow T \cup \{w\}$
-	\STATE   \quad calculate the maximal independent sets $\mathcal{M}=\{M_1,...,M_a\}$, $M_i \subseteq T$, $i=1,...,a$
-	\STATE   \quad sort $\mathcal{M}$ in descending order so that $\omega(M_1)\geq...\geq\omega(M_a)$
+	\STATE   \quad calculate the maximal independent sets: $\mathcal{M}=\{M_1,\cdots,M_a\}$, $M_i \subseteq T$, $i=1,\cdots,a$
+	\STATE   \quad sort $\mathcal{M}$ in descending order by weight so that $\omega(M_1)\geq\cdots\geq\omega(M_a)$
 	\STATE   \quad \textbf{for} $M_i\in\mathcal{M}$ \textbf{do}
 	\STATE   \quad \quad \textbf{if} $\omega(u)+\omega(M_i)\geq \omega(N(u)\cup N(M_i))$ \textbf{then}
 	\STATE   \quad \quad \quad $S\leftarrow S\cup\{u\}\cup M_i$
 	\STATE   \quad \quad \quad remove $\{u\}$, $M_i$ and $N(u)\cup N(M_i)$ from G
 	\STATE   \quad \quad \quad \textbf{break}
+	\STATE   \textbf{return} $S$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[tbp]
+\caption{Exact $k$-vertex Reduction}
+\label{alg:exactkvertex}
+%\SetAlgoLined
+\begin{algorithmic}[1]
+	\REQUIRE A graph $G=(V_G,E_G,\omega)$, a parameter $k$
+        %\vspace*{-.45cm}
+	\ENSURE $S$: a set of vertices in $MWIS(G)$
+	\STATE   initialize $S\leftarrow \emptyset$
+	\STATE   sort $V_G$ by weight in descending order so that $\omega(u_1)\geq\cdots\geq\omega(u_n)$
+	\STATE   \textbf{for} each vertex $u\in V_G$ \textbf{do}
+	\STATE   \quad $T \leftarrow \emptyset$
+	\STATE   \quad \textbf{for} each vertex $v\in N(u)$ \textbf{do}
+	\STATE   \quad \quad \textbf{for} each vertex $w\in N(v)$ \textbf{do}
+	\STATE   \quad \quad \quad \textbf{if} $e(u,w) \notin E_G$ \textbf{then}
+	\STATE   \quad \quad \quad \quad $T \leftarrow T \cup \{w\}$
+	\STATE   \quad calculate independent sets of size $k$: $\mathcal{IS}(k)=\{IS_1,\cdots,IS_a\}$, $IS_i \subseteq T$, $i=1,\cdots,a$
+	\STATE   \quad sort $\mathcal{IS}(k)$ in descending order by weight so that $\omega(IS_1)\geq\cdots\geq\omega(IS_a)$
+	\STATE   \quad \textbf{for} $IS_i\in\mathcal{IS}(k)$ \textbf{do}
+	\STATE   \quad \quad \textbf{if} $\omega(u)+\omega(IS_i)\geq \omega(N(u)\cup N(IS_i))$ \textbf{then}
+	\STATE   \quad \quad \quad $S\leftarrow S\cup\{u\}\cup IS_i$
+	\STATE   \quad \quad \quad remove $\{u\}$, $IS_i$ and $N(u)\cup N(IS_i)$ from G
+	\STATE   \quad \quad \quad \textbf{break}
+	\STATE   \textbf{return} $S$
 \end{algorithmic}
 \end{algorithm}
 
@@ -293,7 +376,7 @@ The reduction algorithm is shown as \autoref{alg:kvertex}.
 
 \noindent\textbf{Graphs}. We tested our algorithm on several graphs at different scales. The graphs are downloaded from \emph{Stanford Network Analysis Platform}~\cite{snapnets} (short as SNAP), \emph{The SuiteSparse Matrix Collection}~\cite{2011The} (short as SSMC) and \emph{The Index of Complex Networks}~\cite{iconnets} (short as ICON). \autoref{tab:graph} lists the statistics.
 
-\begin{table}[htbp]% h asks to places the floating element [h]ere.
+\begin{table}[tbp]% h asks to places the floating element [h]ere.
   \caption{Statistics of Graphs Used for Experiment}
   \label{tab:graph}
   \begin{tabular}{cccccc}
@@ -305,17 +388,31 @@ The reduction algorithm is shown as \autoref{alg:kvertex}.
     G03 & USAir97 & 332 & 2\,126 & SSMC & random\\
     G04 & ca-GrQC & 5\,242 & 14\,496 & SNAP & random\\
     G05 & ca-AstroPh & 18\,772 & 198\,110 & SNAP & random\\
-    G06 & roadNet-PA & 1\,088\,092 & 1\,541\,898 & SNAP & random\\
-    G07 & roadNet-CA & 1\,965\,206 & 2\,766\,607 & SNAP & random\\
+    % G06 & roadNet-PA & 1\,088\,092 & 1\,541\,898 & SNAP & random\\
+    % G07 & roadNet-CA & 1\,965\,206 & 2\,766\,607 & SNAP & random\\
   \bottomrule
 \end{tabular}
 \end{table}
 
-These networks are popular benchmark instances commonly used for the maximum independent set problem. However, most of them are unweighted, and comparable weighted instances are very scarce. Therefore, a common approach in literature is to assign vertex weights uniformly at random from a fixed size interval~\cite{2018Improving,2017An}. To keep our results in line with existing work~\cite{Lamm0SWZ19}, we assigned vertex weights uniformly at random from [1, 200].
+These networks are popular benchmark instances commonly used for the maximum independent set problem. However, most of them are unweighted, and comparable weighted instances are very scarce. Therefore, a common approach in literature is to assign vertex weights uniformly at random from a fixed size interval~\cite{2018Improving,2017An}. To keep our results in line with existing work~\cite{Lamm0SWZ19}, we assigned vertex weights uniformly at random from the interval [1, 200].
 
-\noindent\textbf{Algorithms}. 
+\noindent\textbf{Algorithms}. \emph{KaMIS-WBR} / \emph{KaMIS-WLS}. Weighted Branch and Reduce / Weighted Local Search implemented by the open source tool KaMIS~\cite{Lamm0SWZ19}. \emph{DtTwo} / \emph{DtTwoS}. Single and Two-Vertex Reduction with / without sort. \emph{EDtk}.  Single and Exact 2 to $k$-Vertex Reduction. We tested $k=3,4,5$. \emph{ODtk}. Single and Optimal $k$-Vertex Reduction.
 
-\noindent\textbf{Metrics}. 
+\noindent\textbf{Metrics}. We follow~\citet{Zheng:2020aa} to use set precision ($sp$), weight precision ($wp$) and relative precision ($rp$) as metrics. The set precision and weight precision evaluate the quality of returned solutions by an algorithm (i.e., $Alg(G)$) in terms of the vertex set and weight, respectively.
+
+\begin{equation}
+sp = \frac{|Alg(G)\cap MWIS(G)|}{|MWIS(G)|}
+\end{equation}
+
+\begin{equation}
+wp = \frac{\omega(Alg(G))}{\omega(MWIS(G))}
+\end{equation}
+
+The relative precision is used for large graphs from which are hard to obtain the exact solution. Let $maxAlg(G)$ denote the independent set with the largest weight detected by all the greedy algorithms
+
+\begin{equation}
+rp = \frac{\omega(Alg(G))}{\omega(maxAlg(G))}
+\end{equation}
 
 \subsection{Experimental Results}
 

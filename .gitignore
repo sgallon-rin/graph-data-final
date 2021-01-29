@@ -14,6 +14,7 @@ graph/
 metis/
 metis-done/
 reportdoc/
+KaMIS-2.0/
 
 # Ignore all files in "LaTeX" folders
 /report/*
