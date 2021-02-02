@@ -11,8 +11,9 @@ pvldbstyle-master/
 .vscode/
 data/
 graph/
+graph-wo-self-loop/
 metis/
-metis-done/
+metis-old/
 reportdoc/
 KaMIS-2.0/
 

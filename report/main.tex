@@ -13,6 +13,7 @@
 \usepackage{bm}
 \usepackage{framed}
 \usepackage{graphicx}
+\usepackage{multirow}
 \newcommand*{\algorithmautorefname}{Algorithm}
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
@@ -54,10 +55,7 @@
 %% The abstract is a short summary of the work to be presented in the
 %% article.
 \begin{abstract}
-% TODO: abstract
-Cras fermentum facilisis elit vitae egestas. Mauris porta, neque non rutrum efficitur, odio odio faucibus tortor, vitae imperdiet metus quam vitae eros. Proin porta dictum accumsan. Aliquam dapibus a velit. Curabitur vitae nulla dapibus, ornare dolor in, efficitur enim. Ut maximus mi id arcu ultricies feugiat. Phasellus facilisis purus ac ipsum varius bibendum.
-Cras fermentum facilisis elit vitae egestas. Mauris porta, neque non rutrum efficitur, odio odio faucibus tortor, vitae imperdiet metus quam vitae eros. Proin porta dictum accumsan. Aliquam dapibus a velit. Curabitur vitae nulla dapibus, ornare dolor in, efficitur enim. Ut maximus mi id arcu ultricies feugiat. Phasellus facilisis purus ac ipsum varius bibendum.
-Cras fermentum facilisis elit vitae egestas. Mauris porta, neque non rutrum efficitur, odio odio faucibus tortor, vitae imperdiet metus quam vitae eros. Proin porta dictum accumsan. 
+The maximum independent set (MIS) problem is a famous NP-hard optimization problem in graph theory that has attracted a lot of attention. The maximum weighted independent problem (MWIS) extends the original MIS problem by taking weights on nodes into account, and has wide applications in real senarios. Some reduction rules and greedy algorithms have been proposed to compute a near-maximum weighted independent set. In this paper, we follow the reduction-and-branching strategy, propose a general reduction rule and an exact algorithm on the graph after applying simple reduction rules. Furthermore, we improve existing reduction rules by adding sorting stages, which performs well in the experiment we conduct on several real-life graphs.
 \end{abstract}
 
 \maketitle
@@ -92,9 +90,6 @@ The source code, data, and/or other artifacts have been made available at \url{\
 
 The maximum independent set (short as MIS) of a graph $G$ is the largest vertex set $S$, where each two vertices are non-adjacent, in $G$. It is a classic NP-hard problem in graph theory that has attracted much attention~\cite{lewis1983computers}. However, the traditional MIS problem does not take vertex weight into consideration. Vertex weight can have very important information. In real-world graphs, the vertices do not equally contribute to the MIS.
 
-% TODO: example?
-% For example, 
-
 The maximum weighted independent set (short as MWIS) of a weighted graph $G$ is the independent set with largest total weight, which has a wide-range of practical applications in many areas such as map labeling, alignment of biological networks, wireless communication and so on~\cite{gellner2021boosting}. In MWIS, the weight of an independent set is the sum of weights of all the vertices in $S$. When all the vertices are identical, the computation of MWIS is the same as the computation of MIS. As a result, computing MWIS is also a NP-hard problem and the existing algorithms designed for computing MIS can not be used to solve MWIS problem directly.
 
 We notice that the reduction-based algorithms behave very efficiently when being applied to reduce the size of graph while the correctness of the results is preserved~\cite{fomin2009measure,chang2017computing}. The main idea is to determine whether the vertices are definitely in MIS. However, the reduction rule devised for unweighted graphs cannot be used to compute MWIS on weighted graphs. Based on related works, we focus on designing new reduction rules for general weighted graphs. Inspired by single-vertex reduction and two-vertex reduction~\cite{Zheng:2020aa}, we propose k-vertex reduction. When no reduction rules can be applied, a heuristic strategy is adopted to delete a vertex from the current graph until one reduction rule can be used.
@@ -125,6 +120,8 @@ A maximum independent set, denoted by $MIS(G)$, is an independent set of largest
 Given a graph $G$, a maximum weighted independent set, denoted by $MWIS(G)$, is an $IS(G)$ with the largest weight.
 \end{framed}
 
+Furthermore, note that a node with a self-loop must not be in an independent set according to the definition. 
+
 Computing the exact $MWIS(G)$ is a non-trivial task. Thus, it is usually acceptable to compute a near-optimal weighted independent set in real-world applications.
 
 \section{Related Work}
@@ -135,15 +132,11 @@ Exact algorithms usually compute optimal solutions by systematically exploring t
 
 In recent years, reduction rules have frequently been added into branch-and-bound methods yielding the branch-and-reduce algorithms. These algorithms are able to improve the worst case runtime of branch-and-bound algorithms by applying the reduction rules to the current graph before each branching step~\cite{fomin2009measure}. 
 
-Specifically, two cases should be considered for a vertex $u$: 
-\begin{itemize}
-	\item $u$ is included in the MWIS; or
-	\item $u$ is not included in the MWIS.
-\end{itemize}
-\begin{enumerate}
-	\item In the first case, all neighbors of $u$ cannot belong to the MWIS. The Algorithm is recursively invoked to compute the maximum weighted independent set $S$ of $G\backslash(\{u\} \cup N(u))$, where $N(u)$ is the set of neighbors of $u$ and $G\backslash R$ represents the graph remained by removing the vertices in the vertex set $R$ and the incident edges. If it holds that $\omega(u)+\omega(S)>\max W$, we use $S\cup\{u\}$ to update $MWIS(G)$. 
-	\item In the second case, the process is recursively invoked to compute the maximum weighted independent set $S$ of $G\backslash\{u\}$. If its weight is larger than $\max W$, the MWIS is updated with $S$.
-\end{enumerate}
+Specifically, two cases should be considered for a vertex $u$: $u$ is included in the MWIS; or $u$ is not included in the MWIS. 
+
+\noindent(1) In the first case, all neighbors of $u$ cannot belong to the MWIS. The Algorithm is recursively invoked to compute the maximum weighted independent set $S$ of $G\backslash(\{u\} \cup N(u))$, where $N(u)$ is the set of neighbors of $u$ and $G\backslash R$ represents the graph remained by removing the vertices in the vertex set $R$ and the incident edges. If it holds that $\omega(u)+\omega(S)>\max W$, we use $S\cup\{u\}$ to update $MWIS(G)$. 
+
+\noindent(2) In the second case, the process is recursively invoked to compute the maximum weighted independent set $S$ of $G\backslash\{u\}$. If its weight is larger than $\max W$, the MWIS is updated with $S$.
 
 \subsection{Heuristic Algorithms}
 
@@ -200,7 +193,7 @@ Based on the algorithms~\citet{Zheng:2020aa} proposed, we add sort stages and pr
 	\REQUIRE A graph $G=(V_G,E_G,\omega)$
         %\vspace*{-.45cm}
 	\ENSURE $S$: a set of vertices in $MWIS(G)$
-	\STATE   initialize $S\leftarrow \emptyset$, $T\leftarrow \emptyset$
+	\STATE   initialize $S\leftarrow \emptyset$%, $T\leftarrow \emptyset$
 	\STATE   sort $V_G$ by weight in descending order so that $\omega(u_1)\geq\cdots\geq\omega(u_n)$
 	\STATE   \textbf{for} each vertex $u\in V_G$ \textbf{do}
 	\STATE   \quad $\delta(u)\leftarrow 0$
@@ -212,16 +205,16 @@ Based on the algorithms~\citet{Zheng:2020aa} proposed, we add sort stages and pr
 	\STATE   \quad \quad \quad delete $v$ and its adjacent edges from $G$
 	\STATE   \quad \quad \quad $T \leftarrow T\cup \{v\}$
 	\STATE   \textbf{while} $T\neq \emptyset$ \textbf{do}
-	\STATE   \quad sort $T$ by weight in descending order so that $\omega(v_1)\geq\cdots\geq\omega(v_m)$
 	\STATE   \quad $T' \leftarrow T$, $T\leftarrow \emptyset$
 	\STATE   \quad \textbf{for} each vertex $u\in T'$ \textbf{do}
+	\STATE   \quad \quad sort $N(u)$ by weight in descending order so that $\omega(v_1)\geq\cdots\geq\omega(v_m)$
 	\STATE   \quad \quad \textbf{for} each vertex $v\in N(u)$ \textbf{do}
 	\STATE   \quad \quad \quad $\delta(v) \leftarrow \delta(v) - \omega(u)$
-	\STATE   \quad \quad \textbf{if} $\omega(u)\geq \delta(v)$ \textbf{then}
-	\STATE   \quad \quad \quad $S\leftarrow S\cup\{v\}$
-	\STATE   \quad \quad \quad \textbf{for} each vertex $w\in N(v)$ \textbf{do}
-	\STATE   \quad \quad \quad \quad $T\leftarrow T\cup\{w\}$
-	\STATE   \quad \quad \quad \quad delete $w$ and its adjacent edges from $G$
+	\STATE   \quad \quad \quad \textbf{if} $\omega(v)\geq \delta(v)$ \textbf{then}
+	\STATE   \quad \quad \quad \quad $S\leftarrow S\cup\{v\}$
+	\STATE   \quad \quad \quad \quad \textbf{for} each vertex $w\in N(v)$ \textbf{do}
+	\STATE   \quad \quad \quad \quad \quad $T\leftarrow T\cup\{w\}$
+	\STATE   \quad \quad \quad \quad \quad delete $w$ and its adjacent edges from $G$
 	\STATE   \textbf{return} $S$
 \end{algorithmic}
 \end{algorithm}
@@ -311,9 +304,7 @@ If a set of $k$ vertices $\{u_1, u_2, \cdots, u_k\}$ is added into $MWIS(G)$ by 
 By the definition of an independent set, any pair of vertices $(u_i, u_j)\ (i\neq j)$ from $\{u_1, u_2, \cdots, u_k\}$ must not be neighbors; and by theorem 4.2, $\{u_1, u_2, \cdots, u_k\}$ share at least one common neighbor. Therefore, an arbitrary pair of vertices $(u_i, u_j)\ (i\neq j)$ from $\{u_1, u_2, \cdots, u_k\}$ are 2-hop neighbors of each other. Thus the proof is achieved.
 \end{proof}
 
-For an exact solution, we propose the optimal $k$-vertex reduction algorithm shown as \autoref{alg:optimalkvertex}, which can be applied directly after applying single-vertex reduction. Here, $k$ is not a parameter, but the size of a locally optimal maximal independent set that has the largest weight. Calculating a maximal independent set can be costly, but it is studied more and thus an easier problem.
-
-For an approximate solution, we propose the exact $k$-vertex reduction algorithm shown as \autoref{alg:exactkvertex}, where $k\geq 2$ is a parameter. When $k=2$, the algorithm reduces to Two-vertex Reduction. Exact $k$-vertex reduction should be applied after applying Single-vertex reduction and exact $\{2,\cdots,k-1\}$-vertex reductions, since $k$-vertex reduction with a smaller $k$ is always cheaper. Instead of enumerating all pairs of vertices, it just needs to examine the set of $k$ vertices $\{u_1,\cdots,u_k\}$ that share one common neighbor at least. Theoretically, using a larger $k$ will lead to a more precise MWIS. When no reduction rules can be applied to the current graph, we need to delete some of the largest-degree vertices so that at least one reduction rule becomes available.
+For an exact solution, we propose the optimal $k$-vertex reduction algorithm shown as \autoref{alg:optimalkvertex}, which can be applied directly after applying single-vertex reduction. Here, $k$ is not a parameter, but the size of a locally optimal maximal independent set that has the largest weight. Calculating a maximal independent set can be costly, but it is studied more and thus an easier problem. We propose this exact algorithm without further experiment. Instead, we propose the exact $k$-vertex reduction algorithm shown as \autoref{alg:exactkvertex}, where $k\geq 2$ is a parameter, as approximate solution. When $k=2$, the algorithm reduces to Two-vertex Reduction. Exact $k$-vertex reduction should be applied after applying Single-vertex reduction and exact $\{2,\cdots,k-1\}$-vertex reductions, since $k$-vertex reduction with a smaller $k$ is always cheaper. Instead of enumerating all pairs of vertices, it just needs to examine the set of $k$ vertices $\{u_1,\cdots,u_k\}$ that share one common neighbor at least. Theoretically, using a larger $k$ will lead to a more precise MWIS. When no reduction rules can be applied to the current graph, we need to delete some of the largest-degree vertices so that at least one reduction rule becomes available.
 
 \begin{algorithm}[tbp]
 \caption{Optimal $k$-vertex Reduction}
@@ -370,11 +361,10 @@ For an approximate solution, we propose the exact $k$-vertex reduction algorithm
 \end{algorithm}
 
 \section{Experimental Support}
-% TODO: experiment
 
 \subsection{Experimental Settings}
 
-\noindent\textbf{Graphs}. We tested our algorithm on several graphs at different scales. The graphs are downloaded from \emph{Stanford Network Analysis Platform}~\cite{snapnets} (short as SNAP), \emph{The SuiteSparse Matrix Collection}~\cite{2011The} (short as SSMC) and \emph{The Index of Complex Networks}~\cite{iconnets} (short as ICON). \autoref{tab:graph} lists the statistics.
+\noindent\textbf{Graphs}. We tested our algorithm on several graphs at different scales. The graphs are downloaded from \emph{Stanford Network Analysis Platform}~\cite{snapnets} (short as SNAP), \emph{The SuiteSparse Matrix Collection}~\cite{2011The} (short as SSMC) and \emph{The Index of Complex Networks}~\cite{iconnets} (short as ICON). The self-loops are not removed. \autoref{tab:graph} lists the statistics.
 
 \begin{table}[tbp]% h asks to places the floating element [h]ere.
   \caption{Statistics of Graphs Used for Experiment}
@@ -394,21 +384,25 @@ For an approximate solution, we propose the exact $k$-vertex reduction algorithm
 \end{tabular}
 \end{table}
 
-These networks are popular benchmark instances commonly used for the maximum independent set problem. However, most of them are unweighted, and comparable weighted instances are very scarce. Therefore, a common approach in literature is to assign vertex weights uniformly at random from a fixed size interval~\cite{2018Improving,2017An}. To keep our results in line with existing work~\cite{Lamm0SWZ19}, we assigned vertex weights uniformly at random from the interval [1, 200].
+These networks are popular benchmark instances commonly used for the maximum independent set problem. However, most of them are unweighted, and comparable weighted instances are very scarce. Therefore, a common approach in literature is to assign vertex weights uniformly at random from a fixed size interval~\cite{2018Improving,2017An}. To keep our results in line with existing work~\cite{Lamm0SWZ19}, we assigned vertex weights uniformly at random from the interval [1, 200]. Also, we deleted all the self-loops from the graphs.
 
-\noindent\textbf{Algorithms}. \emph{KaMIS-WBR} / \emph{KaMIS-WLS}. Weighted Branch and Reduce / Weighted Local Search implemented by the open source tool KaMIS~\cite{Lamm0SWZ19}. \emph{DtTwo} / \emph{DtTwoS}. Single and Two-Vertex Reduction with / without sort. \emph{EDtk}.  Single and Exact 2 to $k$-Vertex Reduction. We tested $k=3,4,5$. \emph{ODtk}. Single and Optimal $k$-Vertex Reduction.
+% \noindent\textbf{Algorithms}. \emph{ExactMWIS}. The exact algorithm. \emph{KaMIS-WBR} / \emph{KaMIS-WLS}. Weighted Branch and Reduce / Weighted Local Search implemented by the open source tool KaMIS~\cite{Lamm0SWZ19}. \emph{DtTwo} / \emph{DtTwoS}. Single and Two-Vertex Reduction with / without sort. \emph{EDtk}. Single and Exact 2 to $k$-Vertex Reduction. We tested $k=3,4,5$. \emph{ODtk}. Single and Optimal $k$-Vertex Reduction.
 
-\noindent\textbf{Metrics}. We follow~\citet{Zheng:2020aa} to use set precision ($sp$), weight precision ($wp$) and relative precision ($rp$) as metrics. The set precision and weight precision evaluate the quality of returned solutions by an algorithm (i.e., $Alg(G)$) in terms of the vertex set and weight, respectively.
+\noindent\textbf{Algorithms}. \emph{DtSingle} / \emph{DtSingleS}. Single Vertex Reduction with / without sort. \emph{DtTwo} / \emph{DtTwoS}. Single and Two-Vertex Reduction with / without sort. \emph{EDtk}. Single and Exact 2 to $k$-Vertex Reduction. We tested $k=3,4,5$.
 
-\begin{equation}
-sp = \frac{|Alg(G)\cap MWIS(G)|}{|MWIS(G)|}
-\end{equation}
+% \noindent\textbf{Metrics}. We follow~\citet{Zheng:2020aa} to use set precision ($sp$), weight precision ($wp$) and relative precision ($rp$) as metrics. The set precision and weight precision evaluate the quality of returned solutions by an algorithm (i.e., $Alg(G)$) in terms of the vertex set and weight, respectively.
 
-\begin{equation}
-wp = \frac{\omega(Alg(G))}{\omega(MWIS(G))}
-\end{equation}
+% \begin{equation}
+% sp = \frac{|Alg(G)\cap MWIS(G)|}{|MWIS(G)|}
+% \end{equation}
 
-The relative precision is used for large graphs from which are hard to obtain the exact solution. Let $maxAlg(G)$ denote the independent set with the largest weight detected by all the greedy algorithms
+% \begin{equation}
+% wp = \frac{\omega(Alg(G))}{\omega(MWIS(G))}
+% \end{equation}
+
+% The relative precision is used for large graphs from which are hard to obtain the exact solution. Let $maxAlg(G)$ denote the independent set with the largest weight detected by all the greedy algorithms.
+
+\noindent\textbf{Metrics}. As the exact solution is hard to achieve, we use relative precision ($rp$) as metrics. Let $Alg(G)$ denote the independent set detected by algorithm $Alg$, and $\max Alg(G)$ denote the independent set with the largest weight detected by all the greedy algorithms.
 
 \begin{equation}
 rp = \frac{\omega(Alg(G))}{\omega(maxAlg(G))}
@@ -416,80 +410,56 @@ rp = \frac{\omega(Alg(G))}{\omega(maxAlg(G))}
 
 \subsection{Experimental Results}
 
+We have implemented the exact recursive MWIS algorithm as \emph{ExactMWIS}. Its results are not included below, as it is so inefficient that it even takes several minutes to run on a graph as small as GD98\_c. So does the exact algorithm \autoref{alg:optimalkvertex}. For \emph{EDtk}, we tested it only on small graphs. The experiment results are shown in \autoref{tab:experimentsingle}, \autoref{tab:experimenttwo} and \autoref{tab:experimentk}.
+
+From the results, we can conclude that \autoref{alg:1vertexsort} and \autoref{alg:2vertexsort} which add sorting stages into the original algorithms can improve the quality of the obtained weighted independent set without significant difference in running time. \autoref{alg:exactkvertex} can get a even better solution, with some loss in efficiency, as it needs to calculate independent sets. As for the effect of $k$, choosing $k=3$ can be enough, as an independent set with a larger size is rarer.
+
+
+\begin{table*}[htbp]
+\caption{Experiment Result - Single Vertex Reduction}
+\label{tab:experimentsingle}
+\begin{tabular}{c|cccc|cccc}
+\hline
+\multirow{2}{*}{\textbf{Graph}} & \multicolumn{4}{c|}{\textit{DtSingle}} & \multicolumn{4}{c}{\textit{DtSingleS}} \\ \cline{2-9} 
+              & size    & weight      & time (s)           & rp             & size    & weight      & time (s)           & rp              \\ \hline
+sw-full-inter & 1    & 8      & \textbf{0.0025} & \textbf{1}     & 1    & 8      & 0.0030          & \textbf{1}      \\
+GD98\_c       & 9    & 1\,485   & 0.0015          & \textbf{0.439} & 9    & 1\,450   & \textbf{0.0013} & 0.428           \\
+USAir97       & 63   & 7\,941   & \textbf{0.0108} & 0.6141         & 85   & 9\,805   & 0.0122          & \textbf{0.7583} \\
+ca-GrQC       & 953  & 125\,932 & \textbf{0.1027} & 0.7294         & 1\,047 & 131\,071 & 0.1084          & \textbf{0.7591} \\
+ca-AstroPh    & 1\,197 & 158\,285 & \textbf{1.3402} & 0.9807         & 1\,272 & 161\,407 & 1.4132          & \textbf{1}      \\ \hline
+\end{tabular}
+\end{table*}
+
+\begin{table*}[htbp]
+\caption{Experiment Result - Two Vertex Reduction}
+\label{tab:experimenttwo}
+\begin{tabular}{c|cccc|cccc}
+\hline
+\multirow{2}{*}{\textbf{Graph}} & \multicolumn{4}{c|}{\textit{DtTwo}} & \multicolumn{4}{c}{\textit{DtTwoS}} \\ \cline{2-9} 
+              & size & weight & time (s)        & rp              & size & weight & time (s)        & rp         \\ \hline
+sw-full-inter & 1    & 8      & \textbf{0.1198} & \textbf{1}      & 1    & 8      & 0.1256          & \textbf{1} \\
+GD98\_c       & 21   & 3\,185   & 0.0039          & 0.9423 & 23   & 3\,380   & \textbf{0.0026}  & \textbf{1} \\
+USAir97       & 91   & 11\,127  & 0.3573 & 0.8605          & 111  & 12\,931  & \textbf{0.2847} & \textbf{1} \\
+ca-GrQC       & 1\,269 & 164\,298 & \textbf{1.4322} & 0.9516          & 1\,363 & 172\,656 & 1.6521          & \textbf{1} \\ \hline
+\end{tabular}
+\end{table*}
+
+\begin{table*}[htbp]
+\caption{Experiment Result - k Vertex Reduction}
+\label{tab:experimentk}
+\begin{tabular}{c|cccc|cccc|cccc}
+\hline
+\multirow{2}{*}{\textbf{Graph}} & \multicolumn{4}{c|}{\textit{EDtk (k=3)}} & \multicolumn{4}{c|}{\textit{EDtk (k=4)}} & \multicolumn{4}{c}{EDtk (k=5)} \\ \cline{2-13} 
+        & size & weight & time (s) & rp         & size & weight & time (s) & rp         & size & weight & time (s) & rp         \\ \hline
+GD98\_c & 34   & 5\,155   & 0.0111   & \textbf{1} & 34   & 5\,155   & 0.0146   & \textbf{1} & 34   & 5\,155   & 0.0203   & \textbf{1} \\
+USAir97 & 133  & 16\,702  & 16.665   & \textbf{1} & 133  & 16\,702  & 16.758   & \textbf{1} & 133  & 16\,702  & 16.853   & \textbf{1} \\ \hline
+\end{tabular}
+\end{table*}
+
+
 \section{Conclusion}
-% TODO: conclusion
 
-In this paper, we proposed 
-
-% \subsection{Figures}
-
-% Duck \autoref{fig:duck}.
-
-% \begin{figure}
-%   \centering
-%   \includegraphics[width=\linewidth]{figures/duck}
-%   \caption{An illustration of a Mallard Duck. Picture from Mabel Osgood Wright, \textit{Birdcraft}, published 1897.}
-%   \label{fig:duck}
-% \end{figure}
-
-% \begin{table*}[t]
-%   \caption{A double column table.}
-%   \label{tab:commands}
-%   \begin{tabular}{ccl}
-%     \toprule
-%     A Wide Command Column & A Random Number & Comments\\
-%     \midrule
-%     \verb|\tabular| & 100& The content of a table \\
-%     \verb|\table|  & 300 & For floating tables within a single column\\
-%     \verb|\table*| & 400 & For wider floating tables that span two columns\\
-%     \bottomrule
-%   \end{tabular}
-% \end{table*}
-
-% \subsection{Tables}
-
-% \begin{table}[hb]% h asks to places the floating element [h]ere.
-%   \caption{Frequency of Special Characters}
-%   \label{tab:freq}
-%   \begin{tabular}{ccl}
-%     \toprule
-%     Non-English or Math & Frequency & Comments\\
-%     \midrule
-%     \O & 1 in 1000& For Swedish names\\
-%     $\pi$ & 1 in 5 & Common in math\\
-%     \$ & 4 in 5 & Used in business\\
-%     $\Psi^2_1$ & 1 in 40\,000 & Unexplained usage\\
-%   \bottomrule
-% \end{tabular}
-% \end{table}
-
-% \subsection{Listings and Styles}
-
-% \begin{itemize}
-% \item Duis lacinia mollis purus, ac aliquet arcu dignissim ac. Vivamus accumsan sollicitudin dui, sed porta sem consequat.
-% \item Curabitur ut mauris vel augue tempor suscipit eget eget lacus. Sed pulvinar lobortis dictum. Aliquam dapibus a velit.
-% \item Curabitur vitae nulla dapibus, ornare dolor in, efficitur enim.
-% \end{itemize}
-
-% \begin{enumerate}
-% \item Duis lacinia mollis purus, ac aliquet arcu dignissim ac. Vivamus accumsan sollicitudin dui, sed porta sem consequat.
-% \item Curabitur ut mauris vel augue tempor suscipit eget eget lacus. Sed pulvinar lobortis dictum. Aliquam dapibus a velit.
-% \item Curabitur vitae nulla dapibus, ornare dolor in, efficitur enim.
-% \end{enumerate}
-
-% \subsection{Math and Equations}
-
-% \begin{equation}
-%   \lim_{n\rightarrow \infty}x=0
-% \end{equation}
- 
-% \begin{displaymath}
-%   \sum_{i=0}^{\infty} x + 1
-% \end{displaymath}
-
-% \begin{equation}
-%   \sum_{i=0}^{\infty}x_i=\int_{0}^{\pi+2} f
-% \end{equation}
+In this paper, we study the maximum weighted independent set problem, both its exact and approximate computation. We improve existing reduction rules by adding sorting stages. We propose and prove a new general reduction rule and algorithm, $k$-vertex reduction, for both exact and approximate computation of MWIS. Through experiments on real-life graphs, we show the effectiveness and correctness of the proposed methods.
 
 %==========
 

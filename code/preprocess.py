@@ -6,7 +6,8 @@
 # @File        : preprocess.py
 # @Description : load data from raw file, change them into (node-weighted & undirected) graph and save them
 
-
+import sys
+import os.path
 from util.util import listdir_remove_temp
 from util.GraphLoader import GraphLoaderMat, GraphLoaderTxt, GraphLoaderJson
 
@@ -43,4 +44,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    f = sys.argv[1]
+    # f = "GD98_c.graph"
+    load_raw_and_save_graph(DATA_DIR + f,
+                            GRAPH_DIR + f.split('.')[0] + ".graph")
