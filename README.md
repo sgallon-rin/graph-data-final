@@ -20,6 +20,11 @@ The table below shows the graph data used. They are from the following collectio
 | G03 | USAir97 | 332 | 2,126 | [SSMC](https://sparse.tamu.edu) | random |
 | G04 | ca-GrQC | 5,242 | 14,496 | [SNAP](http://snap.stanford.edu/data/ca-GrQc.html) | random |
 | G05 | ca-AstroPh | 18,772 | 198,110 | [SNAP](http://snap.stanford.edu/data/ca-AstroPh.html) | random |
-| G06 | roadNet-PA | 1,088,092 | 1,541,898 | [SNAP](http://snap.stanford.edu/data/roadNet-PA.html) | random |
-| G07 | roadNet-CA | 1,965,206 | 2,766,607 | [SNAP](http://snap.stanford.edu/data/roadNet-CA.html) | random |
+| G06 | roadNet-PA | 1,088,092 | 1,541,898 | [SNAP](http://snap.stanford.edu/data/roadNet-PA.html) | random / not used |
+| G07 | roadNet-CA | 1,965,206 | 2,766,607 | [SNAP](http://snap.stanford.edu/data/roadNet-CA.html) | random / not used |
 
+****
+
+__Raw and transformed data available at:__
+
+链接:https://pan.baidu.com/s/1w9Quj99BEjLZtvodmc7OdA  密码:djd0
